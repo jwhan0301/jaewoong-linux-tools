@@ -32,9 +32,18 @@ elif [ "$command" = "search" ]; then
         echo "No notes yet."
     fi
 
+elif [ "$command" = "count" ]; then
+if [ -f "$NOTE_FILE" ]; then
+echo "Total notes:"
+wc -l "$NOTE_FILE"
+else
+echo "Total notes: 0"
+fi
+
 else
     echo "Usage:"
     echo "  jnote add MESSAGE"
     echo "  jnote list"
     echo "  jnote search KEYWORD"
+echo "  jnote count"
 fi
