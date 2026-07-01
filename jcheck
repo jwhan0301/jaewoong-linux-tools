@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo "==== Jaewoong's Quick Check ===="
+
+echo
+echo "[User]"
+whoami
+
+echo
+echo "[Hostname]"
+hostname
+
+echo
+echo "[Date]"
+date
+
+echo
+echo "[Current Directory]"
+pwd
+
+echo
+echo "[Disk Usage]"
+df -h | head
+
+echo
+echo "[Memory Usage]"
+free -h
+
+echo
+echo "[IP Addresses]"
+ps aux | head
+echo
+echo "==== Done ===="

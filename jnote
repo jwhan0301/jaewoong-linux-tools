@@ -1,0 +1,40 @@
+#!/bin/bash
+
+NOTE_DIR="$HOME/linux-quest/notes"
+NOTE_FILE="$NOTE_DIR/jnote.txt"
+
+mkdir -p "$NOTE_DIR"
+
+command="$1"
+keyword="$2"
+
+if [ "$command" = "add" ]; then
+    shift
+    echo "$(date '+%Y-%m-%d %H:%M:%S') | $@" >> "$NOTE_FILE"
+    echo "Note added."
+
+elif [ "$command" = "list" ]; then
+    if [ -f "$NOTE_FILE" ]; then
+        cat -n "$NOTE_FILE"
+    else
+        echo "No notes yet."
+    fi
+
+elif [ "$command" = "search" ]; then
+    if [ $# -lt 2 ]; then
+        echo "Usage: jnote search KEYWORD"
+        exit 1
+    fi
+
+    if [ -f "$NOTE_FILE" ]; then
+        grep -n -i "$keyword" "$NOTE_FILE"
+    else
+        echo "No notes yet."
+    fi
+
+else
+    echo "Usage:"
+    echo "  jnote add MESSAGE"
+    echo "  jnote list"
+    echo "  jnote search KEYWORD"
+fi
