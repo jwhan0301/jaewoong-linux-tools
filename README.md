@@ -13,3 +13,4 @@ jnote: simple note tool
 Practice Linux, Bash scripting, and Git.
 - First Github upload completed
 - This line was edited from GitHub web.
+- This line was edited from WSL after git pull.
