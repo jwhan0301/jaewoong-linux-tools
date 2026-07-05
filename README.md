@@ -66,6 +66,7 @@ jnote count
 
 - Linux basic commands
 - File and directory management
+- grep and find
 - Bash scripting
 - chmod and PATH
 - alias and .bashrc
@@ -75,4 +76,3 @@ jnote count
 ## Project Goal
 
 리눅스 명령어를 단순히 외우는 것이 아니라, 직접 작은 도구를 만들면서 익히는 것이 목표입니다.
-
