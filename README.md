@@ -4,6 +4,22 @@
 
 이 프로젝트는 Linux, Bash scripting, Git, GitHub 연습을 위해 만들었습니다.
 
+## Installation
+
+이 프로젝트의 명령어들을 `~/bin`에 설치하려면 아래 명령어를 실행합니다.
+
+```bash
+./install.sh
+```
+
+설치 후 아래 명령어들을 어디서든 사용할 수 있습니다.
+
+```bash
+jcheck
+jgrep
+jnote
+```
+
 ## Commands
 
 ### jcheck
