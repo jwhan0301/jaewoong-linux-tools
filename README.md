@@ -19,6 +19,19 @@ jcheck
 jgrep
 jnote
 ```
+## Uninstallation
+
+설치된 명령어들을 `~/bin`에서 제거하려면 아래 명령어를 실행합니다.
+
+```bash
+./uninstall.sh
+```
+
+확인 질문 없이 제거하려면 아래처럼 실행할 수 있습니다.
+
+```bash
+./uninstall.sh --yes
+```
 
 ## Commands
 
