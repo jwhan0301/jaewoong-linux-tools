@@ -1,21 +1,23 @@
 name: Test
 
 on:
-push:
-branches: [ main ]
-pull_request:
-branches: [ main ]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-test:
-runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
 
-steps:
--name: Check out repository
-uses: actions/checkoout@v5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
 
--name: Make scripts executable
-run: chmod +x test.sh install.sh uninstall.sh jcheck jgrep jnote
+      - name: Make scripts executable
+        run: chmod +x test.sh install.sh uninstall.sh jcheck jgrep jnote
 
--name: Run tests
-run: ./test.sh
+      - name: Run tests
+        run: ./test.sh
