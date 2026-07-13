@@ -32,6 +32,21 @@ jnote
 ```bash
 ./uninstall.sh --yes
 ```
+## Testing
+
+프로젝트가 정상적으로 동작하는지 확인하려면 아래 명령어를 실행합니다.
+
+```bash
+./test.sh
+```
+
+테스트 내용:
+
+- 스크립트 문법 검사
+- 설치 테스트
+- jgrep 검색 테스트
+- jnote 메모 테스트
+- 삭제 테스트
 
 ## Commands
 
