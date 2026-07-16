@@ -119,6 +119,10 @@ jnote count
 - Git commit, branch, merge
 - GitHub push and pull
 
+## Changelog
+
+버전별 변경 내역은 [CHANGELOG.md](CHANGELOG.md)에서 확인할 수 있습니다.
+
 ## Project Goal
 
 리눅스 명령어를 단순히 외우는 것이 아니라, 직접 작은 도구를 만들면서 익히는 것이 목표입니다.
