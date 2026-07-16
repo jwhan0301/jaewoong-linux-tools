@@ -1,5 +1,7 @@
 # Jaewoong Linux Tools
 
+[![Test](https://github.com/jwhan0301/jaewoong-linux-tools/actions/workflows/test.yml/badge.svg)](https://github.com/jwhan0301/jaewoong-linux-tools/actions/workflows/test.yml)
+
 재웅이의 리눅스 학습용 개인 명령어 모음입니다.
 
 이 프로젝트는 Linux, Bash scripting, Git, GitHub 연습을 위해 만들었습니다.
