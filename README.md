@@ -21,6 +21,15 @@ jcheck
 jgrep
 jnote
 ```
+
+설치 확인:
+
+```bash
+which jcheck
+which jgrep
+which jnote
+```
+
 ## Uninstallation
 
 설치된 명령어들을 `~/bin`에서 제거하려면 아래 명령어를 실행합니다.
@@ -34,6 +43,7 @@ jnote
 ```bash
 ./uninstall.sh --yes
 ```
+
 ## Testing
 
 프로젝트가 정상적으로 동작하는지 확인하려면 아래 명령어를 실행합니다.
