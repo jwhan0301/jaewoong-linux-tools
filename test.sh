@@ -111,9 +111,17 @@ grep -q "Total notes: 2" "$TEST_HOME/jnote-count-after-delete.out"
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" clear --yes
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count-after-clear.out"
 grep -q "Total notes: 0" "$TEST_HOME/jnote-count-after-clear.out"
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" import "$TEST_HOME/exported-notes.txt"
 
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count-after-import.out"
+grep -q "Total notes: 3" "$TEST_HOME/jnote-count-after-import.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" list > "$TEST_HOME/jnote-after-import.out"
+grep -q "Linux test note" "$TEST_HOME/jnote-after-import.out"
+grep -q "Git test note" "$TEST_HOME/jnote-after-import.out"
+grep -q "Edited target note" "$TEST_HOME/jnote-after-import.out"
 echo "OK: jnote add/list/show/search/count/edit/export/delete/clear"
-
+echo "OK: jnote add/list/show/search/count/edit/export/import/delete/clear"
 echo
 echo "[5] Uninstall test"
 

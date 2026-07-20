@@ -146,6 +146,25 @@ jnote export notes-backup.txt
 - `jnote clear --yes`: 확인 없이 모든 메모를 비웁니다.
 - `jnote export FILE`: 현재 메모를 지정한 파일로 내보냅니다.
 
+### Import notes
+
+백업 파일의 메모를 현재 메모 뒤에 추가합니다.
+
+```bash
+jnote import notes-backup.txt
+```
+
+백업 및 복구 예시:
+
+```bash
+jnote export notes-backup.txt
+jnote clear --yes
+jnote import notes-backup.txt
+jnote list
+```
+
+같은 파일을 여러 번 import하면 메모가 중복될 수 있습니다.
+
 ## What I Learned
 
 이 프로젝트를 만들면서 배운 것들:
