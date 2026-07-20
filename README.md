@@ -115,6 +115,19 @@ jnote count
 - 메모 목록 보기
 - 메모 검색
 - 메모 개수 확인
+추가 기능:
+
+```bash
+jnote delete 1
+jnote clear
+jnote clear --yes
+jnote export notes-backup.txt
+```
+
+- `jnote delete NUMBER`: 해당 번호의 메모를 삭제합니다.
+- `jnote clear`: 모든 메모를 비웁니다. 실행 전 확인을 받습니다.
+- `jnote clear --yes`: 확인 없이 모든 메모를 비웁니다.
+- `jnote export FILE`: 현재 메모를 지정한 파일로 내보냅니다.
 
 ## What I Learned
 
