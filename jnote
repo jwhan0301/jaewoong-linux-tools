@@ -9,12 +9,49 @@ show_usage() {
     echo "Usage:"
     echo "  jnote add MESSAGE"
     echo "  jnote list"
+    echo "  jnote show NUMBER"
     echo "  jnote search KEYWORD"
     echo "  jnote count"
+    echo "  jnote edit NUMBER MESSAGE"
     echo "  jnote delete NUMBER"
     echo "  jnote clear"
     echo "  jnote clear --yes"
     echo "  jnote export FILE"
+}
+
+note_count() {
+    if [ -f "$NOTE_FILE" ]; then
+        wc -l < "$NOTE_FILE" | tr -d ' '
+    else
+        echo 0
+    fi
+}
+
+validate_note_number() {
+    local number="$1"
+    local total
+
+    case "$number" in
+        ''|*[!0-9]*)
+            echo "Invalid note number: $number"
+            return 1
+            ;;
+    esac
+
+    total=$(note_count)
+
+    if [ "$total" -eq 0 ]; then
+        echo "No notes yet."
+        return 1
+    fi
+
+    if [ "$number" -lt 1 ] || [ "$number" -gt "$total" ]; then
+        echo "Invalid note number: $number"
+        echo "Valid range: 1-$total"
+        return 1
+    fi
+
+    return 0
 }
 
 command="$1"
@@ -27,7 +64,7 @@ case "$command" in
         fi
 
         shift
-        echo "$(date '+%Y-%m-%d %H:%M:%S') | $@" >> "$NOTE_FILE"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') | $*" >> "$NOTE_FILE"
         echo "Note added."
         ;;
 
@@ -37,6 +74,19 @@ case "$command" in
         else
             echo "No notes yet."
         fi
+        ;;
+
+    show)
+        number="$2"
+
+        if [ $# -lt 2 ]; then
+            echo "Usage: jnote show NUMBER"
+            exit 1
+        fi
+
+        validate_note_number "$number" || exit 1
+
+        sed -n "${number}p" "$NOTE_FILE"
         ;;
 
     search)
@@ -55,12 +105,36 @@ case "$command" in
         ;;
 
     count)
-        if [ -f "$NOTE_FILE" ]; then
-            count=$(wc -l < "$NOTE_FILE" | tr -d ' ')
-            echo "Total notes: $count"
-        else
-            echo "Total notes: 0"
+        count=$(note_count)
+        echo "Total notes: $count"
+        ;;
+
+    edit)
+        number="$2"
+
+        if [ $# -lt 3 ]; then
+            echo "Usage: jnote edit NUMBER MESSAGE"
+            exit 1
         fi
+
+        validate_note_number "$number" || exit 1
+
+        shift 2
+        message="$*"
+        temp_file=$(mktemp)
+
+        awk -v target="$number" -v replacement="$(date '+%Y-%m-%d %H:%M:%S') | $message" '
+            NR == target {
+                print replacement
+                next
+            }
+            {
+                print
+            }
+        ' "$NOTE_FILE" > "$temp_file"
+
+        mv "$temp_file" "$NOTE_FILE"
+        echo "Edited note: $number"
         ;;
 
     delete)
@@ -71,25 +145,7 @@ case "$command" in
             exit 1
         fi
 
-        case "$number" in
-            ''|*[!0-9]*)
-                echo "Invalid note number: $number"
-                exit 1
-                ;;
-        esac
-
-        if [ ! -s "$NOTE_FILE" ]; then
-            echo "No notes yet."
-            exit 1
-        fi
-
-        total=$(wc -l < "$NOTE_FILE" | tr -d ' ')
-
-        if [ "$number" -lt 1 ] || [ "$number" -gt "$total" ]; then
-            echo "Invalid note number: $number"
-            echo "Valid range: 1-$total"
-            exit 1
-        fi
+        validate_note_number "$number" || exit 1
 
         sed -i "${number}d" "$NOTE_FILE"
         echo "Deleted note: $number"

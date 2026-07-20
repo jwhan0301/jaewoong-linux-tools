@@ -64,25 +64,41 @@ echo "[4] jnote test"
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" add "Linux test note"
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" add "Git test note"
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" add "Edit target note"
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" list > "$TEST_HOME/jnote-list.out"
 grep -q "Linux test note" "$TEST_HOME/jnote-list.out"
 grep -q "Git test note" "$TEST_HOME/jnote-list.out"
+grep -q "Edit target note" "$TEST_HOME/jnote-list.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" show 2 > "$TEST_HOME/jnote-show.out"
+grep -q "Git test note" "$TEST_HOME/jnote-show.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" edit 3 "Edited target note"
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" show 3 > "$TEST_HOME/jnote-show-edited.out"
+grep -q "Edited target note" "$TEST_HOME/jnote-show-edited.out"
+
+if grep -q "Edit target note" "$TEST_HOME/jnote-show-edited.out"; then
+    echo "Edit failed: old note still exists in note 3"
+    exit 1
+fi
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" search git > "$TEST_HOME/jnote-search.out"
 grep -qi "Git test note" "$TEST_HOME/jnote-search.out"
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count.out"
-grep -q "Total notes: 2" "$TEST_HOME/jnote-count.out"
+grep -q "Total notes: 3" "$TEST_HOME/jnote-count.out"
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" export "$TEST_HOME/exported-notes.txt"
 grep -q "Linux test note" "$TEST_HOME/exported-notes.txt"
 grep -q "Git test note" "$TEST_HOME/exported-notes.txt"
+grep -q "Edited target note" "$TEST_HOME/exported-notes.txt"
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" delete 1
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" list > "$TEST_HOME/jnote-after-delete.out"
 
 grep -q "Git test note" "$TEST_HOME/jnote-after-delete.out"
+grep -q "Edited target note" "$TEST_HOME/jnote-after-delete.out"
 
 if grep -q "Linux test note" "$TEST_HOME/jnote-after-delete.out"; then
     echo "Delete failed: Linux test note still exists"
@@ -90,13 +106,13 @@ if grep -q "Linux test note" "$TEST_HOME/jnote-after-delete.out"; then
 fi
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count-after-delete.out"
-grep -q "Total notes: 1" "$TEST_HOME/jnote-count-after-delete.out"
+grep -q "Total notes: 2" "$TEST_HOME/jnote-count-after-delete.out"
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" clear --yes
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count-after-clear.out"
 grep -q "Total notes: 0" "$TEST_HOME/jnote-count-after-clear.out"
 
-echo "OK: jnote add/list/search/count/export/delete/clear"
+echo "OK: jnote add/list/show/search/count/edit/export/delete/clear"
 
 echo
 echo "[5] Uninstall test"

@@ -128,6 +128,23 @@ jnote export notes-backup.txt
 - `jnote clear`: 모든 메모를 비웁니다. 실행 전 확인을 받습니다.
 - `jnote clear --yes`: 확인 없이 모든 메모를 비웁니다.
 - `jnote export FILE`: 현재 메모를 지정한 파일로 내보냅니다.
+추가 기능:
+
+```bash
+jnote show 1
+jnote edit 1 "수정된 메모 내용"
+jnote delete 1
+jnote clear
+jnote clear --yes
+jnote export notes-backup.txt
+```
+
+- `jnote show NUMBER`: 해당 번호의 메모만 보여줍니다.
+- `jnote edit NUMBER MESSAGE`: 해당 번호의 메모를 새 내용으로 수정합니다.
+- `jnote delete NUMBER`: 해당 번호의 메모를 삭제합니다.
+- `jnote clear`: 모든 메모를 비웁니다. 실행 전 확인을 받습니다.
+- `jnote clear --yes`: 확인 없이 모든 메모를 비웁니다.
+- `jnote export FILE`: 현재 메모를 지정한 파일로 내보냅니다.
 
 ## What I Learned
 
