@@ -212,6 +212,26 @@ jnote archived
 jnote restore 1
 ```
 
+### Undo
+
+마지막으로 수행한 변경 작업을 한 번 되돌립니다.
+
+```bash
+jnote undo
+```
+
+되돌릴 수 있는 작업:
+
+- add
+- edit
+- delete
+- clear
+- import
+- archive
+- restore
+
+`jnote undo`는 마지막 작업 한 번만 복원합니다.
+
 ## What I Learned
 
 이 프로젝트를 만들면서 배운 것들:

@@ -199,7 +199,47 @@ grep -q "Edited target note" "$backup_file"
 
 echo "OK: jnote add/list/show/search/today/recent/count/edit/export/import/backup/archive/restore/delete/clear"
 echo
-echo "[5] Uninstall test"
+echo
+echo "[5] jnote undo test"
+
+UNDO_HOME="$TEST_HOME/undo-home"
+mkdir -p "$UNDO_HOME"
+
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" add "Keep note"
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" add "Undo this note"
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" undo
+
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" list \
+    > "$TEST_HOME/jnote-undo-add.out"
+
+grep -q "Keep note" "$TEST_HOME/jnote-undo-add.out"
+
+if grep -q "Undo this note" "$TEST_HOME/jnote-undo-add.out"; then
+    echo "Undo add test failed."
+    exit 1
+fi
+
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" add "Delete target"
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" delete 1
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" undo
+
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" list \
+    > "$TEST_HOME/jnote-undo-delete.out"
+
+grep -q "Keep note" "$TEST_HOME/jnote-undo-delete.out"
+grep -q "Delete target" "$TEST_HOME/jnote-undo-delete.out"
+
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" clear --yes
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" undo
+
+HOME="$UNDO_HOME" "$TEST_HOME/bin/jnote" count \
+    > "$TEST_HOME/jnote-undo-clear.out"
+
+grep -q "Total notes: 2" "$TEST_HOME/jnote-undo-clear.out"
+
+echo "OK: jnote one-level undo"
+
+echo "[6] Uninstall test"
 
 HOME="$TEST_HOME" "$PROJECT_DIR/uninstall.sh" --yes
 

@@ -1,4 +1,12 @@
 # Changelog
+## v0.13.0
+
+### Added
+
+- Added one-level `jnote undo`
+- Added snapshots for modifying commands
+- Added automated undo tests
+
 ## v0.12.0
 
 ### Added

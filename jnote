@@ -4,6 +4,11 @@ NOTE_DIR="$HOME/linux-quest/notes"
 NOTE_FILE="$NOTE_DIR/jnote.txt"
 ARCHIVE_FILE="$NOTE_DIR/archive.txt"
 
+UNDO_DIR="$NOTE_DIR/.undo"
+UNDO_NOTE_FILE="$UNDO_DIR/jnote.txt"
+UNDO_ARCHIVE_FILE="$UNDO_DIR/archive.txt"
+UNDO_META_FILE="$UNDO_DIR/action.txt"
+
 mkdir -p "$NOTE_DIR"
 
 show_usage() {
@@ -15,6 +20,7 @@ show_usage() {
     echo "  jnote count"
     echo "  jnote edit NUMBER MESSAGE"
     echo "  jnote delete NUMBER"
+    echo "  jnote undo"
     echo "  jnote clear"
     echo "  jnote clear --yes"
     echo "  jnote export FILE"
@@ -61,6 +67,43 @@ validate_note_number() {
 
     return 0
 }
+save_snapshot() {
+    local action="$1"
+
+    mkdir -p "$UNDO_DIR"
+
+    if [ -f "$NOTE_FILE" ]; then
+        cp "$NOTE_FILE" "$UNDO_NOTE_FILE"
+    else
+        : > "$UNDO_NOTE_FILE"
+    fi
+
+    if [ -f "$ARCHIVE_FILE" ]; then
+        cp "$ARCHIVE_FILE" "$UNDO_ARCHIVE_FILE"
+    else
+        : > "$UNDO_ARCHIVE_FILE"
+    fi
+
+    printf '%s\n' "$action" > "$UNDO_META_FILE"
+}
+
+restore_snapshot() {
+    local action
+
+    if [ ! -f "$UNDO_META_FILE" ]; then
+        echo "Nothing to undo."
+        return 1
+    fi
+
+    action=$(cat "$UNDO_META_FILE")
+
+    cp "$UNDO_NOTE_FILE" "$NOTE_FILE"
+    cp "$UNDO_ARCHIVE_FILE" "$ARCHIVE_FILE"
+
+    rm -rf -- "$UNDO_DIR"
+
+    echo "Undid: $action"
+}
 
 command="$1"
 
@@ -72,6 +115,8 @@ case "$command" in
         fi
 
         shift
+save_snapshot "add"
+
         echo "$(date '+%Y-%m-%d %H:%M:%S') | $*" >> "$NOTE_FILE"
         echo "Note added."
         ;;
@@ -126,6 +171,7 @@ case "$command" in
         fi
 
         validate_note_number "$number" || exit 1
+        save_snapshot "edit $number"
 
         shift 2
         message="$*"
@@ -154,6 +200,7 @@ case "$command" in
         fi
 
         validate_note_number "$number" || exit 1
+        save_snapshot "delete $number"
 
         sed -i "${number}d" "$NOTE_FILE"
         echo "Deleted note: $number"
@@ -171,6 +218,8 @@ case "$command" in
                 exit 0
             fi
         fi
+
+        save_snapshot "clear"
 
         : > "$NOTE_FILE"
         echo "All notes cleared."
@@ -223,6 +272,8 @@ case "$command" in
         fi
 
         imported_count=$(awk 'END { print NR }' "$source_file")
+
+        save_snapshot "import $source_file"
 
         cat "$source_file" >> "$NOTE_FILE"
 
@@ -292,6 +343,7 @@ case "$command" in
         fi
 
         validate_note_number "$number" || exit 1
+        save_snapshot "archive $number"
 
         archived_note=$(sed -n "${number}p" "$NOTE_FILE")
 
@@ -338,6 +390,7 @@ case "$command" in
         fi
 
         restored_note=$(sed -n "${number}p" "$ARCHIVE_FILE")
+        save_snapshot "restore $number"
 
         printf '%s\n' "$restored_note" >> "$NOTE_FILE"
         sed -i "${number}d" "$ARCHIVE_FILE"
@@ -345,7 +398,12 @@ case "$command" in
         echo "Restored archived note: $number"
         ;;
 
+    undo)
+        restore_snapshot || exit 1
+        ;;
+
     *)
         show_usage
         ;;
+
 esac
