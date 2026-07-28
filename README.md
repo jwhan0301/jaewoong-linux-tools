@@ -165,6 +165,53 @@ jnote list
 
 같은 파일을 여러 번 import하면 메모가 중복될 수 있습니다.
 
+### Convenience commands
+
+오늘 작성한 메모만 확인합니다.
+
+```bash
+jnote today
+```
+
+최근 메모를 확인합니다. 숫자를 생략하면 최근 5개를 보여줍니다.
+
+```bash
+jnote recent
+jnote recent 3
+```
+
+날짜와 시간이 포함된 파일명으로 메모를 자동 백업합니다.
+
+```bash
+jnote backup
+```
+
+백업 파일은 아래 폴더에 저장됩니다.
+
+```text
+~/linux-quest/notes/backups
+```
+
+### Archive commands
+
+메모를 삭제하지 않고 보관함으로 이동합니다.
+
+```bash
+jnote archive 2
+```
+
+보관된 메모 목록을 확인합니다.
+
+```bash
+jnote archived
+```
+
+보관함의 메모를 현재 메모 목록으로 복원합니다.
+
+```bash
+jnote restore 1
+```
+
 ## What I Learned
 
 이 프로젝트를 만들면서 배운 것들:

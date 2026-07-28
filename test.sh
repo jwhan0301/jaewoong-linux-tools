@@ -108,9 +108,57 @@ fi
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count-after-delete.out"
 grep -q "Total notes: 2" "$TEST_HOME/jnote-count-after-delete.out"
 
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" archive 2
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count \
+    > "$TEST_HOME/jnote-count-after-archive.out"
+
+grep -q "Total notes: 1" \
+    "$TEST_HOME/jnote-count-after-archive.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" archived \
+    > "$TEST_HOME/jnote-archived.out"
+
+grep -q "Edited target note" \
+    "$TEST_HOME/jnote-archived.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" list \
+    > "$TEST_HOME/jnote-after-archive.out"
+
+grep -q "Git test note" \
+    "$TEST_HOME/jnote-after-archive.out"
+
+if grep -q "Edited target note" \
+    "$TEST_HOME/jnote-after-archive.out"; then
+    echo "Archive test failed: archived note is still active"
+    exit 1
+fi
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" restore 1
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count \
+    > "$TEST_HOME/jnote-count-after-restore.out"
+
+grep -q "Total notes: 2" \
+    "$TEST_HOME/jnote-count-after-restore.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" list \
+    > "$TEST_HOME/jnote-after-restore.out"
+
+grep -q "Git test note" \
+    "$TEST_HOME/jnote-after-restore.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" archived \
+    > "$TEST_HOME/jnote-archive-after-restore.out"
+
+grep -q "No archived notes." \
+    "$TEST_HOME/jnote-archive-after-restore.out"
+
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" clear --yes
+
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count-after-clear.out"
 grep -q "Total notes: 0" "$TEST_HOME/jnote-count-after-clear.out"
+
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" import "$TEST_HOME/exported-notes.txt"
 
 HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" count > "$TEST_HOME/jnote-count-after-import.out"
@@ -120,8 +168,36 @@ HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" list > "$TEST_HOME/jnote-after-import.o
 grep -q "Linux test note" "$TEST_HOME/jnote-after-import.out"
 grep -q "Git test note" "$TEST_HOME/jnote-after-import.out"
 grep -q "Edited target note" "$TEST_HOME/jnote-after-import.out"
-echo "OK: jnote add/list/show/search/count/edit/export/delete/clear"
-echo "OK: jnote add/list/show/search/count/edit/export/import/delete/clear"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" today > "$TEST_HOME/jnote-today.out"
+grep -q "Linux test note" "$TEST_HOME/jnote-today.out"
+grep -q "Git test note" "$TEST_HOME/jnote-today.out"
+grep -q "Edited target note" "$TEST_HOME/jnote-today.out"
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" recent 2 > "$TEST_HOME/jnote-recent.out"
+grep -q "Git test note" "$TEST_HOME/jnote-recent.out"
+grep -q "Edited target note" "$TEST_HOME/jnote-recent.out"
+
+if grep -q "Linux test note" "$TEST_HOME/jnote-recent.out"; then
+    echo "Recent test failed: too many notes were shown"
+    exit 1
+fi
+
+HOME="$TEST_HOME" "$TEST_HOME/bin/jnote" backup
+
+backup_file=$(find "$TEST_HOME/linux-quest/notes/backups" \
+    -type f -name 'jnote-*.txt' -print -quit)
+
+if [ -z "$backup_file" ] || [ ! -f "$backup_file" ]; then
+    echo "Backup test failed: backup file was not created"
+    exit 1
+fi
+
+grep -q "Linux test note" "$backup_file"
+grep -q "Git test note" "$backup_file"
+grep -q "Edited target note" "$backup_file"
+
+echo "OK: jnote add/list/show/search/today/recent/count/edit/export/import/backup/archive/restore/delete/clear"
 echo
 echo "[5] Uninstall test"
 

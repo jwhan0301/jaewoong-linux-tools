@@ -1,4 +1,21 @@
 # Changelog
+## v0.12.0
+
+### Added
+
+- Added `jnote archive NUMBER`
+- Added `jnote archived`
+- Added `jnote restore NUMBER`
+- Added automated archive and restore tests
+
+## v0.11.0
+
+### Added
+
+- Added `jnote today`
+- Added `jnote recent [NUMBER]`
+- Added `jnote backup`
+- Added automatic tests for the new commands
 
 ## v0.6.0
 

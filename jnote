@@ -2,6 +2,7 @@
 
 NOTE_DIR="$HOME/linux-quest/notes"
 NOTE_FILE="$NOTE_DIR/jnote.txt"
+ARCHIVE_FILE="$NOTE_DIR/archive.txt"
 
 mkdir -p "$NOTE_DIR"
 
@@ -18,6 +19,12 @@ show_usage() {
     echo "  jnote clear --yes"
     echo "  jnote export FILE"
     echo "  jnote import FILE"
+    echo "  jnote today"
+    echo "  jnote recent [NUMBER]"
+    echo "  jnote backup"
+    echo "  jnote archive NUMBER"
+    echo "  jnote archived"
+    echo "  jnote restore NUMBER"
 }
 
 note_count() {
@@ -221,6 +228,121 @@ case "$command" in
 
         echo "Imported notes: $imported_count"
         echo "Source: $source_file"
+        ;;
+        
+     today)
+        today_date=$(date '+%Y-%m-%d')
+
+        if [ ! -s "$NOTE_FILE" ]; then
+            echo "No notes yet."
+            exit 0
+        fi
+
+        if ! grep -n "^$today_date " "$NOTE_FILE"; then
+            echo "No notes for today."
+        fi
+        ;;
+
+     recent)
+        number="${2:-5}"
+
+        case "$number" in
+            ''|*[!0-9]*)
+                echo "Invalid number: $number"
+                echo "Usage: jnote recent [NUMBER]"
+                exit 1
+                ;;
+        esac
+
+        if [ "$number" -lt 1 ]; then
+            echo "NUMBER must be at least 1."
+            exit 1
+        fi
+
+        if [ ! -s "$NOTE_FILE" ]; then
+            echo "No notes yet."
+            exit 0
+        fi
+
+        nl -ba "$NOTE_FILE" | tail -n "$number"
+        ;;
+
+    backup)
+        if [ ! -s "$NOTE_FILE" ]; then
+            echo "No notes to back up."
+            exit 1
+        fi
+
+        backup_dir="$NOTE_DIR/backups"
+        timestamp=$(date '+%Y%m%d-%H%M%S')
+        target="$backup_dir/jnote-$timestamp.txt"
+
+        mkdir -p "$backup_dir"
+        cp "$NOTE_FILE" "$target"
+
+        echo "Backup created: $target"
+        ;;
+
+    archive)
+        number="$2"
+
+        if [ $# -lt 2 ]; then
+            echo "Usage: jnote archive NUMBER"
+            exit 1
+        fi
+
+        validate_note_number "$number" || exit 1
+
+        archived_note=$(sed -n "${number}p" "$NOTE_FILE")
+
+        printf '%s\n' "$archived_note" >> "$ARCHIVE_FILE"
+        sed -i "${number}d" "$NOTE_FILE"
+
+        echo "Archived note: $number"
+        ;;
+
+    archived)
+        if [ -s "$ARCHIVE_FILE" ]; then
+            cat -n "$ARCHIVE_FILE"
+        else
+            echo "No archived notes."
+        fi
+        ;;
+
+    restore)
+        number="$2"
+
+        if [ $# -lt 2 ]; then
+            echo "Usage: jnote restore NUMBER"
+            exit 1
+        fi
+
+        case "$number" in
+            ''|*[!0-9]*)
+                echo "Invalid archive number: $number"
+                exit 1
+                ;;
+        esac
+
+        if [ ! -s "$ARCHIVE_FILE" ]; then
+            echo "No archived notes."
+            exit 1
+        fi
+
+        total=$(wc -l < "$ARCHIVE_FILE" | tr -d ' ')
+
+        if [ "$number" -lt 1 ] || [ "$number" -gt "$total" ]; then
+            echo "Invalid archive number: $number"
+            echo "Valid range: 1-$total"
+            exit 1
+        fi
+
+        restored_note=$(sed -n "${number}p" "$ARCHIVE_FILE")
+
+        printf '%s\n' "$restored_note" >> "$NOTE_FILE"
+        sed -i "${number}d" "$ARCHIVE_FILE"
+
+        echo "Restored archived note: $number"
         ;;
 
     *)
